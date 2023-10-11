@@ -40,7 +40,7 @@ const roleTypes: typeof RoleTypes = {
 export function Navigation() {
   const { fssettings } = useFullscreenSettingsStore();
   const pathname = usePathname();
-  const { data } = useSession();
+  const { data: session } = useSession();
   const featureFlags = useContext(FeatureFlagContext);
 
   return (
@@ -82,7 +82,7 @@ export function Navigation() {
                   hero
                 </span>
               </Link>
-              {featureFlags?.exploreButton ? (
+              {featureFlags?.enableExplore ? (
                 <Link href="/explore" className="ml-4">
                   <div
                     className={clsx('hover:text-foreground text-foreground/80 transition-colors', {
@@ -93,7 +93,7 @@ export function Navigation() {
                   </div>
                 </Link>
               ) : null}
-              {featureFlags?.tracksButton ? (
+              {featureFlags?.enableTracks ? (
                 <Link href="/tracks" className="ml-4">
                   <div
                     className={clsx('hover:text-foreground text-foreground/80 transition-colors', {
@@ -108,7 +108,7 @@ export function Navigation() {
             <div className="flex">
               <div className="flex items-center justify-end gap-2">
                 <ThemeButton />
-                {featureFlags?.loginButton ? <LoginButton /> : null}
+                {featureFlags.enableLogin ? <LoginButton /> : null}
               </div>
             </div>
           </div>
@@ -146,23 +146,11 @@ function ThemeButton() {
 }
 
 function LoginButton() {
-  const [loading, setLoading] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const isAdminOrMod = isAdminOrModerator(session);
 
-  // NOTE: 1. loading == true -> 2. signIn() -> 3. session status == 'loading' (loading == false)
-  const handleSignIn = async () => {
-    try {
-      setLoading(true);
-      // page reloads after sign in, so no need to setLoading(false), othersiwe ugly visual glitch
-      await signIn('github', { redirect: false });
-    } catch (error) {
-      // only set loading to false if there was an error and page didn't reload after sign in
-      setLoading(false);
-    }
-  };
   const handleSignOut = async () => {
     await signOut({ redirect: false });
     router.refresh();
