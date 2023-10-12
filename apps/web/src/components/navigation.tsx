@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn, signOut, useSession } from '@repo/auth/react';
+import { signOut, useSession } from '@repo/auth/react';
 import { type RoleTypes } from '@repo/db/types';
 import { Button } from '@repo/ui/components/button';
 import {
@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/ui/components/dropdown-menu';
-import { Loader2, LogIn, Moon, Play, Settings, Settings2, Sun, User } from '@repo/ui/icons';
+import { LogIn, Moon, Play, Settings, Settings2, Sun, User } from '@repo/ui/icons';
 import clsx from 'clsx';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -40,7 +40,6 @@ const roleTypes: typeof RoleTypes = {
 export function Navigation() {
   const { fssettings } = useFullscreenSettingsStore();
   const pathname = usePathname();
-  const { data: session } = useSession();
   const featureFlags = useContext(FeatureFlagContext);
 
   return (
@@ -108,7 +107,7 @@ export function Navigation() {
             <div className="flex">
               <div className="flex items-center justify-end gap-2">
                 <ThemeButton />
-                {featureFlags.enableLogin ? <LoginButton /> : null}
+                {featureFlags?.enableLogin ? <LoginButton /> : null}
               </div>
             </div>
           </div>
